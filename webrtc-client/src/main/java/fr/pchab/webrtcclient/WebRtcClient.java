@@ -1,6 +1,10 @@
 package fr.pchab.webrtcclient;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
 import java.net.URISyntaxException;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
 
@@ -10,9 +14,14 @@ import com.github.nkzawa.emitter.Emitter;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.content.Context;
 import android.opengl.EGLContext;
+import android.os.Environment;
 import android.util.Log;
+import android.widget.Toast;
+
 import org.webrtc.*;
+
 
 public class WebRtcClient {
     private final static String TAG = WebRtcClient.class.getCanonicalName();
@@ -27,6 +36,15 @@ public class WebRtcClient {
     private VideoSource videoSource;
     private RtcListener mListener;
     private Socket client;
+
+
+
+    public static String sdPath = null;
+    public static String appPath = null;
+    public static String videoPath = null;
+    public static String logPath = null;
+    public static String logFile = null;
+
 
     /**
      * Implement this interface to be notified of events.
@@ -321,6 +339,7 @@ public class WebRtcClient {
         return MAX_PEER;
     }
 
+
     /**
      * Start the client.
      *
@@ -360,7 +379,10 @@ public class WebRtcClient {
     }
 
     private VideoCapturer getVideoCapturer() {
-        String frontCameraDeviceName = VideoCapturerAndroid.getNameOfFrontFacingDevice();
+        //change to use back facing device for smart eye glass.
+        //String frontCameraDeviceName = VideoCapturerAndroid.getNameOfFrontFacingDevice();
+        String frontCameraDeviceName = VideoCapturerAndroid.getNameOfBackFacingDevice();
+
         return VideoCapturerAndroid.create(frontCameraDeviceName);
     }
 }

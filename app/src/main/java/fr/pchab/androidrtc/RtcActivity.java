@@ -1,6 +1,7 @@
 package fr.pchab.androidrtc;
 
 import android.app.Activity;
+import android.content.ComponentName;
 import android.content.Intent;
 import android.graphics.Point;
 import android.opengl.GLSurfaceView;
@@ -12,6 +13,9 @@ import org.json.JSONException;
 import org.webrtc.MediaStream;
 import org.webrtc.VideoRenderer;
 import org.webrtc.VideoRendererGui;
+
+import fr.pchab.androidrtc.modules.FileHandle;
+import fr.pchab.androidrtc.modules.GlobalVariable;
 import fr.pchab.webrtcclient.WebRtcClient;
 import fr.pchab.webrtcclient.PeerConnectionParameters;
 
@@ -75,6 +79,12 @@ public class RtcActivity extends Activity implements WebRtcClient.RtcListener {
         localRender = VideoRendererGui.create(
                 LOCAL_X_CONNECTING, LOCAL_Y_CONNECTING,
                 LOCAL_WIDTH_CONNECTING, LOCAL_HEIGHT_CONNECTING, scalingType, true);
+
+
+        //
+        GlobalVariable.CreateAppPath();
+        FileHandle.WriteLog(GlobalVariable.logFile, "s");
+
 
         final Intent intent = getIntent();
         final String action = intent.getAction();
@@ -140,9 +150,17 @@ public class RtcActivity extends Activity implements WebRtcClient.RtcListener {
 
     public void call(String callId) {
         Intent msg = new Intent(Intent.ACTION_SEND);
+
+        //new add to default copy to clipboard.
+        msg.setComponent(new ComponentName("com.google.android.apps.docs", "com.google.android.apps.docs.app.SendTextToClipboardActivity"));
+
         msg.putExtra(Intent.EXTRA_TEXT, mSocketAddress + callId);
         msg.setType("text/plain");
-        startActivityForResult(Intent.createChooser(msg, "Call someone :"), VIDEO_CALL_SENT);
+
+        //we don't need choice
+        //startActivityForResult(Intent.createChooser(msg, "Call someone :"), VIDEO_CALL_SENT);
+
+        startActivityForResult(msg, VIDEO_CALL_SENT);
     }
 
     @Override
@@ -178,6 +196,8 @@ public class RtcActivity extends Activity implements WebRtcClient.RtcListener {
 
     @Override
     public void onAddRemoteStream(MediaStream remoteStream, int endPoint) {
+        //we don't need show remote screen.
+        /*
         remoteStream.videoTracks.get(0).addRenderer(new VideoRenderer(remoteRender));
         VideoRendererGui.update(remoteRender,
                 REMOTE_X, REMOTE_Y,
@@ -186,6 +206,7 @@ public class RtcActivity extends Activity implements WebRtcClient.RtcListener {
                 LOCAL_X_CONNECTED, LOCAL_Y_CONNECTED,
                 LOCAL_WIDTH_CONNECTED, LOCAL_HEIGHT_CONNECTED,
                 scalingType);
+        */
     }
 
     @Override
